@@ -1,24 +1,50 @@
 <?php
+
+function formatRupiah($angka): string {
+    return "Rp " . number_format($angka, 0, ',', '.');
+}
+
 class Produk {
-public $nama;
-public $harga;
-public function statusHarga() {
-if ($this->harga > 100000) {
-return "Produk Mahal";
-} else {
-return "Produk Terjangkau";
+    
+    public $nama;
+    public $harga;
+
+    public function hitungSubtotal($jumlah): float|int {
+        return $this->harga * $jumlah;
+    }
+
+    public function hitungDiskon($subtotal, $persenDiskon): float|int {
+        return ($persenDiskon / 100) * $subtotal;
+    }
+
+    public function hitungTotal($jumlah, $persenDiskon): float|int {
+        $subtotal = $this->hitungSubtotal($jumlah);
+        $diskon = $this->hitungDiskon($subtotal, $persenDiskon);
+        return $subtotal - $diskon;
+    }
 }
-}
 
-}
-$produk1 = new Produk();
+$data = [
+    "nama"   => htmlspecialchars($_POST['nama']),
+    "harga"  => (int) $_POST['harga'],
+    "jumlah" => (int) $_POST['jumlah'],
+    "diskon" => (int) $_POST['diskon']
+];
 
-$produk1->nama = htmlspecialchars($_POST['nama']);
-$produk1->harga = htmlspecialchars($_POST['harga']);
+$produk = new Produk();
+$produk->nama = $data["nama"];
+$produk->harga = $data["harga"];
 
-echo "<h2>Data Produk Warung AA Keonho </h2>";
-echo "Nama Produk : " . $produk1->nama . "<br>";
-echo "Harga : Rp " . $produk1->harga . "<br>" ; 
+$subtotal = $produk->hitungSubtotal($data["jumlah"]);
+$diskon = $produk->hitungDiskon($subtotal, $data["diskon"]);
+$total = $produk->hitungTotal($data["jumlah"], $data["diskon"]);
 
-echo "Status : " . $produk1->statusHarga();
+echo "<h2>HASIL BELANJA</h2>";
+echo "Produk : " . $produk->nama . "<br>";
+echo "Harga : " . formatRupiah($produk->harga) . "<br>";
+echo "Jumlah : " . $data["jumlah"] . "<br>";
+echo "Subtotal : " . formatRupiah($subtotal) . "<br>";
+echo "Diskon (" . $data["diskon"] . "%) : " . formatRupiah($diskon) . "<br>";
+echo "<b>Total Bayar : " . formatRupiah($total) . "</b>";
+
 ?>
