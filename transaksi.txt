@@ -1,0 +1,3 @@
+Siswa 1 setor: 5000 | Saldo: 105000
+Siswa 1 tarik: 4000 | Saldo: 101000
+Siswa 1 setor: 10000000 | Saldo: 10100000
